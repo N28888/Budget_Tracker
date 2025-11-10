@@ -73,9 +73,21 @@ async function saveData() {
 
 // 登出
 function logout() {
+    // 清除所有本地数据
     localStorage.removeItem('token');
     localStorage.removeItem('username');
-    window.location.href = '/auth.html';
+    localStorage.removeItem('budgetTrackerData');
+    
+    // 停止所有定时器
+    if (window.rateUpdateInterval) {
+        clearInterval(window.rateUpdateInterval);
+    }
+    if (window.displayUpdateInterval) {
+        clearInterval(window.displayUpdateInterval);
+    }
+    
+    // 跳转到登录页
+    window.location.replace('/auth.html');
 }
 
 // 获取汇率
@@ -87,7 +99,7 @@ async function fetchExchangeRate() {
         data.exchangeRate = result.rates[data.secondaryCurrency];
         data.lastRateUpdate = Date.now();
         
-        // 更新愿望清单中以次货币添加的商品价格
+        // 更新愿望单中以次货币添加的商品价格
         updateWishlistPrices(oldRate, data.exchangeRate);
         
         updateRateDisplay();
@@ -99,7 +111,7 @@ async function fetchExchangeRate() {
     }
 }
 
-// 更新愿望清单价格（当汇率变化时）
+// 更新愿望单价格（当汇率变化时）
 function updateWishlistPrices(oldRate, newRate) {
     data.wishlist.forEach(wish => {
         // 如果商品是以次货币添加的，需要重新计算主货币价格
@@ -124,7 +136,7 @@ function checkAndUpdateRate() {
 // 启动自动更新汇率定时器
 function startAutoRateUpdate() {
     // 每小时检查并更新一次
-    setInterval(checkAndUpdateRate, 60 * 60 * 1000);
+    window.rateUpdateInterval = setInterval(checkAndUpdateRate, 60 * 60 * 1000);
     
     // 页面加载时检查一次
     checkAndUpdateRate();
@@ -233,12 +245,12 @@ function updateExpensesList() {
     });
 }
 
-// 更新愿望清单
+// 更新愿望单
 function updateWishlist() {
     const list = document.getElementById('wishList');
     
     if (data.wishlist.length === 0) {
-        list.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🛍️</div><div class="empty-state-text">还没有愿望清单</div></div>';
+        list.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🛍️</div><div class="empty-state-text">还没有愿望单</div></div>';
         return;
     }
     
@@ -353,7 +365,7 @@ function saveEditExpense() {
     closeEditExpenseModal();
 }
 
-// 编辑愿望清单项目
+// 编辑愿望单项目
 function editWish(index) {
     const wish = data.wishlist[index];
     editingWishIndex = index;
@@ -390,7 +402,7 @@ function closeEditWishModal() {
     document.getElementById('editWishTaxType').disabled = true;
 }
 
-// 保存编辑的愿望清单
+// 保存编辑的愿望单
 function saveEditWish() {
     const name = document.getElementById('editWishName').value;
     let price = parseFloat(document.getElementById('editWishPrice').value);
@@ -419,7 +431,7 @@ function saveEditWish() {
         price = price / data.exchangeRate;
     }
     
-    // 更新愿望清单项目
+    // 更新愿望单项目
     data.wishlist[editingWishIndex] = {
         name,
         price,
@@ -440,7 +452,7 @@ function updateCurrencyLabels() {
     document.getElementById('expenseCurrencyPrimary').textContent = data.primaryCurrency;
     document.getElementById('expenseCurrencySecondary').textContent = data.secondaryCurrency;
     
-    // 更新愿望清单货币选择器
+    // 更新愿望单货币选择器
     document.getElementById('wishCurrencyPrimary').textContent = data.primaryCurrency;
     document.getElementById('wishCurrencySecondary').textContent = data.secondaryCurrency;
 }
@@ -484,7 +496,7 @@ function switchPage(section) {
     const titles = {
         'overview': '总览',
         'expenses': '支出管理',
-        'wishlist': '愿望清单',
+        'wishlist': '愿望单',
         'settings': '设置'
     };
     document.getElementById('pageTitle').textContent = titles[section];
@@ -641,7 +653,7 @@ async function init() {
     startAutoRateUpdate();
 
     // 每分钟更新一次显示的时间
-    setInterval(updateRateDisplay, 60000);
+    window.displayUpdateInterval = setInterval(updateRateDisplay, 60000);
     
     // 编辑支出模态框事件监听
     document.getElementById('saveEditExpense').addEventListener('click', saveEditExpense);
@@ -652,7 +664,7 @@ async function init() {
         }
     });
     
-    // 编辑愿望清单模态框事件监听
+    // 编辑愿望单模态框事件监听
     document.getElementById('saveEditWish').addEventListener('click', saveEditWish);
     
     // 编辑模态框税率选项切换

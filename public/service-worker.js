@@ -1,69 +1,33 @@
-const CACHE_NAME = 'budget-tracker-v1';
-const urlsToCache = [
-  '/',
-  '/auth.html',
-  '/index.html',
-  '/auth.css',
-  '/style.css',
-  '/auth.js',
-  '/app.js',
-  '/manifest.json'
-];
+const CACHE_NAME = 'budget-tracker-v3';
 
 // 安装 Service Worker
 self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => {
-        console.log('缓存已打开');
-        return cache.addAll(urlsToCache);
-      })
-  );
+  // 强制跳过等待，立即激活
+  self.skipWaiting();
+  console.log('Service Worker 安装成功');
 });
 
 // 激活 Service Worker
 self.addEventListener('activate', event => {
   event.waitUntil(
+    // 清除所有旧缓存
     caches.keys().then(cacheNames => {
       return Promise.all(
         cacheNames.map(cacheName => {
-          if (cacheName !== CACHE_NAME) {
-            console.log('删除旧缓存:', cacheName);
-            return caches.delete(cacheName);
-          }
+          console.log('删除缓存:', cacheName);
+          return caches.delete(cacheName);
         })
       );
+    }).then(() => {
+      // 立即控制所有页面
+      return self.clients.claim();
     })
   );
+  console.log('Service Worker 激活成功');
 });
 
-// 拦截请求
+// 拦截请求 - 始终使用网络，不缓存
 self.addEventListener('fetch', event => {
-  event.respondWith(
-    caches.match(event.request)
-      .then(response => {
-        // 缓存命中，返回缓存的资源
-        if (response) {
-          return response;
-        }
-        
-        // 否则发起网络请求
-        return fetch(event.request).then(response => {
-          // 检查是否是有效的响应
-          if (!response || response.status !== 200 || response.type !== 'basic') {
-            return response;
-          }
-          
-          // 克隆响应
-          const responseToCache = response.clone();
-          
-          caches.open(CACHE_NAME)
-            .then(cache => {
-              cache.put(event.request, responseToCache);
-            });
-          
-          return response;
-        });
-      })
-  );
+  // 直接使用网络请求，不缓存
+  event.respondWith(fetch(event.request));
 });

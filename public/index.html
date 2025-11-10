@@ -134,7 +134,7 @@
             </div>
         </div>
 
-        <!-- 愿望清单页面 -->
+        <!-- 愿望单页面 -->
         <div class="page" id="wishlist-page">
             <div class="card">
                 <div class="card-header">
@@ -258,7 +258,7 @@
         </div>
     </div>
 
-    <!-- 编辑愿望清单模态框 -->
+    <!-- 编辑愿望单模态框 -->
     <div id="editWishModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -296,12 +296,22 @@
 
     <script src="app.js"></script>
     <script>
-        // 注册 Service Worker
+        // 注销旧的 Service Worker 并注册新的
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
+                // 先注销所有旧的 Service Worker
+                navigator.serviceWorker.getRegistrations().then(registrations => {
+                    registrations.forEach(registration => {
+                        registration.unregister();
+                    });
+                });
+                
+                // 注册新的 Service Worker
                 navigator.serviceWorker.register('/service-worker.js')
                     .then(registration => {
                         console.log('Service Worker 注册成功:', registration.scope);
+                        // 强制更新
+                        registration.update();
                     })
                     .catch(error => {
                         console.log('Service Worker 注册失败:', error);

@@ -48,7 +48,7 @@ scp budget-tracker.tar.gz $USER@$SERVER:/tmp/
 
 # 3. 在服务器上执行部署
 echo "🚀 在服务器上部署..."
-ssh $USER@$SERVER << 'ENDSSH'
+ssh $USER@$SERVER bash -s << ENDSSH
     # 创建目录
     mkdir -p $REMOTE_DIR
     cd $REMOTE_DIR
@@ -71,12 +71,24 @@ ssh $USER@$SERVER << 'ENDSSH'
     # 创建数据目录
     mkdir -p data
     
-    # 停止旧服务
+    # 彻底清理旧进程
+    echo "🧹 清理旧进程..."
     pm2 stop budget-tracker 2>/dev/null || true
     pm2 delete budget-tracker 2>/dev/null || true
     
-    # 启动服务
-    pm2 start ecosystem.config.js
+    # 杀死所有占用 3000 端口的进程
+    echo "🔫 清理端口 3000..."
+    lsof -ti:3000 | xargs kill -9 2>/dev/null || true
+    fuser -k 3000/tcp 2>/dev/null || true
+    
+    # 等待端口释放
+    sleep 2
+    
+    # 启动服务（手动设置环境变量）
+    echo "🚀 启动服务..."
+    JWT_SECRET=\$(grep JWT_SECRET .env | cut -d '=' -f2)
+    JWT_SECRET="\$JWT_SECRET" NODE_ENV=production PORT=3000 pm2 start server.js --name budget-tracker
+    
     pm2 save
     
     echo "✅ 部署完成！"
