@@ -12,7 +12,9 @@ let data = {
     monthlyBudget: 0,
     expenses: [],
     wishlist: [],
-    lastRateUpdate: null
+    lastRateUpdate: null,
+    resetDay: 1, // 每月重置日期，默认1号
+    lastResetDate: null // 上次重置的日期
 };
 
 // 检查登录状态
@@ -71,6 +73,41 @@ async function saveData() {
     }
 }
 
+// 检查并重置账单
+function checkAndResetBilling() {
+    const today = new Date();
+    const currentDay = today.getDate();
+    const resetDay = data.resetDay || 1;
+    
+    // 如果没有上次重置日期，设置为当前日期
+    if (!data.lastResetDate) {
+        data.lastResetDate = today.toISOString().split('T')[0];
+        saveData();
+        return;
+    }
+    
+    const lastReset = new Date(data.lastResetDate);
+    
+    // 检查是否跨月或者到达重置日
+    const shouldReset = (
+        // 情况1: 当前日期是重置日，且上次重置不是今天
+        (currentDay === resetDay && lastReset.toDateString() !== today.toDateString()) ||
+        // 情况2: 跨月了且当前日期已经过了重置日
+        (today.getMonth() !== lastReset.getMonth() && currentDay >= resetDay) ||
+        // 情况3: 跨年了
+        (today.getFullYear() !== lastReset.getFullYear() && currentDay >= resetDay)
+    );
+    
+    if (shouldReset) {
+        // 清空本月支出
+        data.expenses = [];
+        data.lastResetDate = today.toISOString().split('T')[0];
+        saveData();
+        updateAllDisplays();
+        console.log('账单已自动重置');
+    }
+}
+
 // 登出
 function logout() {
     // 清除所有本地数据
@@ -84,6 +121,9 @@ function logout() {
     }
     if (window.displayUpdateInterval) {
         clearInterval(window.displayUpdateInterval);
+    }
+    if (window.resetCheckInterval) {
+        clearInterval(window.resetCheckInterval);
     }
     
     // 跳转到登录页
@@ -510,6 +550,17 @@ document.querySelectorAll('.nav-item').forEach(item => {
     });
 });
 
+// 移动端导航事件监听器
+document.querySelectorAll('.mobile-nav-item').forEach(item => {
+    item.addEventListener('click', () => {
+        const section = item.getAttribute('data-section');
+        switchPage(section);
+        // 更新移动端导航的active状态
+        document.querySelectorAll('.mobile-nav-item').forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+    });
+});
+
 document.getElementById('primaryCurrency').addEventListener('change', (e) => {
     data.primaryCurrency = e.target.value;
     saveData();
@@ -588,6 +639,18 @@ document.getElementById('saveTaxRate').addEventListener('click', () => {
     }
 });
 
+// 保存重置日期
+document.getElementById('saveResetDay').addEventListener('click', () => {
+    const resetDay = parseInt(document.getElementById('resetDay').value);
+    if (resetDay >= 1 && resetDay <= 28) {
+        data.resetDay = resetDay;
+        saveData();
+        alert(`账单重置日已设置为每月 ${resetDay} 号`);
+    } else {
+        alert('请输入1-28之间的日期');
+    }
+});
+
 document.getElementById('addWish').addEventListener('click', () => {
     const name = document.getElementById('wishName').value;
     let price = parseFloat(document.getElementById('wishPrice').value);
@@ -645,6 +708,11 @@ async function init() {
     document.getElementById('primaryCurrency').value = data.primaryCurrency;
     document.getElementById('secondaryCurrency').value = data.secondaryCurrency;
     document.getElementById('taxRate').value = data.taxRate || 13;
+    document.getElementById('resetDay').value = data.resetDay || 1;
+    
+    // 检查是否需要重置账单
+    checkAndResetBilling();
+    
     updateCurrencyLabels();
     updateRateDisplay();
     updateAllDisplays();
@@ -654,6 +722,9 @@ async function init() {
 
     // 每分钟更新一次显示的时间
     window.displayUpdateInterval = setInterval(updateRateDisplay, 60000);
+    
+    // 每小时检查一次是否需要重置账单
+    window.resetCheckInterval = setInterval(checkAndResetBilling, 3600000);
     
     // 编辑支出模态框事件监听
     document.getElementById('saveEditExpense').addEventListener('click', saveEditExpense);
