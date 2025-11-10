@@ -102,9 +102,11 @@ body::after {
 }
 
 .logo {
-    font-size: 72px;
-    margin-bottom: 20px;
-    display: inline-block;
+    width: 96px;
+    height: 96px;
+    margin: 0 auto 20px;
+    display: block;
+    object-fit: contain;
     animation: bounce 2s ease-in-out infinite;
 }
 
@@ -367,7 +369,8 @@ body::after {
     }
 
     .logo {
-        font-size: 56px;
+        width: 72px;
+        height: 72px;
     }
 
     .auth-header h1 {

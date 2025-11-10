@@ -11,34 +11,35 @@
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="/manifest.json">
     <link rel="apple-touch-icon" href="/icons/icon-192x192.svg">
+    <link rel="icon" type="image/svg+xml" href="/icons/icon-96x96.svg">
 </head>
 <body>
     <nav class="sidebar">
         <div class="logo">
-            <span class="logo-icon">💵</span>
+            <img src="/icons/icon-96x96.svg" alt="Logo" class="logo-icon">
             <span class="logo-text">预算追踪</span>
         </div>
         <ul class="nav-menu">
             <li class="nav-item active" data-section="overview">
-                <span class="nav-icon">📊</span>
+                <img src="/icons/overview.png" alt="Logo" class="logo-icon">
                 <span class="nav-text">总览</span>
             </li>
             <li class="nav-item" data-section="expenses">
-                <span class="nav-icon">💸</span>
+                <img src="/icons/expense.png" alt="Logo" class="logo-icon">
                 <span class="nav-text">支出</span>
             </li>
             <li class="nav-item" data-section="wishlist">
-                <span class="nav-icon">🛍️</span>
+                <img src="/icons/shopping.png" alt="Logo" class="logo-icon">
                 <span class="nav-text">愿望单</span>
             </li>
             <li class="nav-item" data-section="settings">
-                <span class="nav-icon">⚙️</span>
+                <img src="/icons/setting.png" alt="Logo" class="logo-icon">
                 <span class="nav-text">设置</span>
             </li>
         </ul>
         <div class="sidebar-footer">
             <button class="logout-btn" onclick="logout()">
-                <span class="nav-icon">🚪</span>
+                <img src="/icons/Logout_black.png" alt="Logo" class="logo-icon">
                 <span class="nav-text">退出登录</span>
             </button>
         </div>
@@ -47,19 +48,19 @@
     <!-- 移动端底部导航 -->
     <nav class="mobile-nav">
         <div class="mobile-nav-item active" data-section="overview">
-            <span class="mobile-nav-icon">📊</span>
+            <img src="/icons/overview.png" alt="Logo" class="logo-icon">
             <span class="mobile-nav-text">总览</span>
         </div>
         <div class="mobile-nav-item" data-section="expenses">
-            <span class="mobile-nav-icon">💸</span>
+            <img src="/icons/expense.png" alt="Logo" class="logo-icon">
             <span class="mobile-nav-text">支出</span>
         </div>
         <div class="mobile-nav-item" data-section="wishlist">
-            <span class="mobile-nav-icon">🛍️</span>
+            <img src="/icons/shopping.png" alt="Logo" class="logo-icon">
             <span class="mobile-nav-text">愿望单</span>
         </div>
         <div class="mobile-nav-item" data-section="settings">
-            <span class="mobile-nav-icon">⚙️</span>
+            <img src="/icons/setting.png" alt="Logo" class="logo-icon">
             <span class="mobile-nav-text">设置</span>
         </div>
     </nav>
@@ -70,7 +71,7 @@
             <div class="top-bar-right">
                 <div class="rate-badge" id="rateInfo">汇率加载中...</div>
                 <div class="user-info">
-                    <span class="user-icon">👤</span>
+                    <img src="/icons/profile.png" alt="Logo" class="logo-icon">
                     <span class="user-name" id="userName">用户</span>
                 </div>
             </div>
@@ -80,7 +81,7 @@
         <div class="page active" id="overview-page">
             <div class="stats-grid">
                 <div class="stat-card budget-card">
-                    <div class="stat-icon">💰</div>
+                    <img src="/icons/overview.png" alt="Logo" class="logo-icon">
                     <div class="stat-content">
                         <div class="stat-label">本月预算</div>
                         <div class="stat-value" id="budgetPrimary">¥0</div>
@@ -88,7 +89,7 @@
                     </div>
                 </div>
                 <div class="stat-card spent-card">
-                    <div class="stat-icon">💸</div>
+                    <img src="/icons/expense.png" alt="Logo" class="logo-icon">
                     <div class="stat-content">
                         <div class="stat-label">已花费</div>
                         <div class="stat-value" id="spentPrimary">¥0</div>
@@ -96,7 +97,7 @@
                     </div>
                 </div>
                 <div class="stat-card remaining-card">
-                    <div class="stat-icon">💵</div>
+                    <img src="/icons/coin.png" alt="Logo" class="logo-icon">
                     <div class="stat-content">
                         <div class="stat-label">剩余</div>
                         <div class="stat-value" id="remainingPrimary">¥0</div>
@@ -107,7 +108,7 @@
 
             <div class="stats-grid">
                 <div class="stat-card wishlist-card">
-                    <div class="stat-icon">🛍️</div>
+                    <img src="/icons/diamond.png" alt="Logo" class="logo-icon">
                     <div class="stat-content">
                         <div class="stat-label">愿望单总额</div>
                         <div class="stat-value" id="wishlistTotalPrimary">¥0</div>
@@ -115,7 +116,7 @@
                     </div>
                 </div>
                 <div class="stat-card after-wishlist-card">
-                    <div class="stat-icon">💎</div>
+                    <img src="/icons/money_pocket.png" alt="Logo" class="logo-icon">
                     <div class="stat-content">
                         <div class="stat-label">扣除愿望单后</div>
                         <div class="stat-value" id="afterWishlistPrimary">¥0</div>
