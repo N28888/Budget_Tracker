@@ -1,64 +1,192 @@
-# 预算追踪器
+# 💰 Budget Tracker
 
-一个功能完整的个人预算管理应用，支持多设备同步、双货币转换、税费计算等功能。
+[English](README.md) | [中文](README_CN.md)
 
-## 功能特点
+A full-featured personal budget management application with multi-device sync, dual-currency conversion, and PWA installation support.
 
-- 💰 **月度预算管理** - 设置和追踪每月预算
-- 💱 **双货币支持** - 支持多种货币，实时汇率转换（每小时自动更新）
-- 📊 **支出记录** - 记录和管理日常支出，保存添加时的汇率
-- 🛍️ **愿望清单** - 记录想买的东西及价格，支持税费计算
-- 👤 **用户系统** - 注册登录，数据云端存储
-- 📱 **响应式设计** - 支持手机、平板、电脑访问
-- 🔄 **多设备同步** - 数据保存在服务器，多设备实时同步
+## ✨ Features
 
-## 技术栈
+- 💰 **Monthly Budget Management** - Set and track monthly budgets, view remaining balance in real-time
+- 💱 **Dual Currency Support** - Support for 7 currencies with real-time exchange rates (auto-updates hourly)
+- 📊 **Expense Tracking** - Record daily expenses, preserve exchange rates at time of entry, editable
+- 🛍️ **Wishlist** - Track items you want to buy, tax calculation support, automatic currency conversion
+- 👤 **User System** - Register/login, cloud data storage, multi-device sync
+- 📱 **PWA Support** - Installable as an app, fullscreen experience, no address bar
+- 🎨 **Modern UI** - Dark theme, glassmorphism effects, smooth animations
+- 🔄 **Offline Cache** - Service Worker support, partial offline functionality
 
-- **前端**: HTML5 / CSS3 / JavaScript
-- **后端**: Node.js + Express
-- **认证**: JWT
-- **存储**: JSON 文件
+## 📱 Install as App (PWA)
 
-## 本地开发
+### iOS (iPhone/iPad)
+
+1. Open the webpage in Safari
+2. Tap the "Share" button at the bottom
+3. Select "Add to Home Screen"
+4. Done! Open from home screen, no address bar
+
+### Android
+
+1. Open the webpage in Chrome
+2. Tap the "Install" prompt that appears
+3. Or tap menu → "Install app"
+4. Done! App appears in app list
+
+### Desktop (Chrome/Edge)
+
+1. Open the webpage
+2. Click the "Install" icon ⊕ in the address bar
+3. Click "Install" to confirm
+4. Done! Runs in standalone window
+
+## 💻 Tech Stack
+
+### Frontend
+
+- HTML5 / CSS3 / JavaScript
+- PWA (Progressive Web App)
+- Service Worker (offline cache)
+- Responsive design
+
+### Backend
+
+- Node.js + Express
+- JWT authentication
+- JSON file storage
+
+## 🛠️ Local Development
 
 ```bash
-# 安装依赖
+# Install dependencies
 npm install
 
-# 启动服务器
+# Start server
 npm start
 
-# 访问应用
+# Access application
 http://localhost:3000/auth.html
 ```
 
-## 部署到服务器
+## 🌐 Deploy to Server
 
 ```bash
-# 运行部署脚本
+# Run deployment script
 ./deploy-to-server.sh
 ```
 
-## 支持的货币
+The script will automatically:
 
-- CNY (人民币)
-- USD (美元)
-- EUR (欧元)
-- GBP (英镑)
-- JPY (日元)
-- HKD (港币)
-- CAD (加币)
+- Package the project
+- Upload to server
+- Install dependencies
+- Start PM2 process
+- Configure auto-restart
 
-## 环境变量
+## 💱 Supported Currencies
 
-创建 `.env` 文件：
+- 🇨🇳 CNY (Chinese Yuan)
+- 🇺🇸 USD (US Dollar)
+- 🇪🇺 EUR (Euro)
+- 🇬🇧 GBP (British Pound)
+- 🇯🇵 JPY (Japanese Yen)
+- 🇭🇰 HKD (Hong Kong Dollar)
+- 🇨🇦 CAD (Canadian Dollar)
 
-```
+## ⚙️ Environment Variables
+
+Create a `.env` file:
+
+```env
 PORT=3000
-JWT_SECRET=your-secret-key
+JWT_SECRET=your-secret-key-here
 NODE_ENV=production
 ```
 
-## License
+## 📂 Project Structure
 
-MIT
+```
+Budget_Planner/
+├── public/              # Frontend files
+│   ├── auth.html       # Login/Register page
+│   ├── index.html      # Main application page
+│   ├── auth.css        # Login page styles
+│   ├── style.css       # Main app styles
+│   ├── auth.js         # Login logic
+│   ├── app.js          # Main app logic
+│   ├── manifest.json   # PWA configuration
+│   ├── service-worker.js  # Offline cache
+│   └── icons/          # App icons
+├── server.js           # Backend server
+├── package.json        # Project configuration
+├── ecosystem.config.js # PM2 configuration
+└── deploy-to-server.sh # Deployment script
+```
+
+## 🎯 User Guide
+
+1. **Register Account** - First-time visitors need to register
+2. **Set Budget** - Set monthly budget on overview page
+3. **Track Expenses** - Add daily expenses on expenses page
+4. **Manage Wishlist** - Add items you want to buy on wishlist page
+5. **Multi-device Sync** - Login on any device, data syncs automatically
+
+## 🔒 Security Features
+
+- Password encryption using bcrypt
+- JWT Token authentication
+- Mandatory secret key in production
+- Data isolation (each user independent)
+
+## 📊 Common Commands
+
+```bash
+# Check service status
+ssh users@server 'pm2 status'
+
+# View logs
+ssh users@server 'pm2 logs budget-tracker'
+
+# Restart service
+ssh users@server 'pm2 restart budget-tracker'
+
+# Update code
+./deploy-to-server.sh
+```
+
+## 🐛 Troubleshooting
+
+### Service Won't Start
+
+```bash
+# Check logs
+pm2 logs budget-tracker --lines 50
+
+# Check port usage
+lsof -i :3000
+```
+
+### PWA Won't Install
+
+- Ensure using HTTPS (or localhost)
+- Check if manifest.json is correct
+- Clear browser cache and retry
+
+## 📝 Changelog
+
+### v1.0.1 (2025-11-10)
+
+- ✅ User registration/login system
+- ✅ Monthly budget management
+- ✅ Expense tracking (editable)
+- ✅ Wishlist (tax calculation support)
+- ✅ Dual currency real-time conversion
+- ✅ PWA support
+- ✅ Multi-device data sync
+- ✅ Responsive design
+
+## 👨‍💻 Author: [N28888](https://github.com/N28888)
+
+Budget Tracker - Making financial management easier
+
+---
+
+**⭐ If you find this useful, please Star!**
