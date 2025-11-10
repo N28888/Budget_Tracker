@@ -149,6 +149,13 @@
                     <h2>支出记录</h2>
                 </div>
                 <div class="card-body">
+                    <div class="filter-container">
+                        <div class="filter-group">
+                            <label>筛选时间：</label>
+                            <input type="month" id="expenseMonthFilter" placeholder="选择年月">
+                            <button class="btn-secondary" id="resetExpenseFilter">显示全部</button>
+                        </div>
+                    </div>
                     <div id="expensesList" class="list-container"></div>
                 </div>
             </div>

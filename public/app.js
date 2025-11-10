@@ -250,35 +250,57 @@ function updateBudgetDisplay() {
 function updateExpensesList() {
     const list = document.getElementById('expensesList');
     
-    if (data.expenses.length === 0) {
-        list.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📝</div><div class="empty-state-text">还没有支出记录</div></div>';
+    // 获取筛选条件
+    const monthFilter = document.getElementById('expenseMonthFilter').value;
+    
+    // 筛选支出
+    let filteredExpenses = data.expenses.filter((expense, index) => {
+        expense._originalIndex = index; // 保存原始索引
+        
+        if (!monthFilter) return true; // 没有筛选条件，显示全部
+        if (!expense.date) return true; // 兼容没有日期的旧数据
+        
+        const expenseDate = new Date(expense.date);
+        const expenseYearMonth = `${expenseDate.getFullYear()}-${String(expenseDate.getMonth() + 1).padStart(2, '0')}`;
+        
+        return expenseYearMonth === monthFilter;
+    });
+    
+    if (filteredExpenses.length === 0) {
+        list.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📝</div><div class="empty-state-text">没有符合条件的支出记录</div></div>';
         return;
     }
     
     list.innerHTML = '';
-    data.expenses.forEach((expense, index) => {
+    filteredExpenses.forEach((expense) => {
         const div = document.createElement('div');
         div.className = 'list-item';
         
         // 使用保存的汇率显示次货币金额
         let secondaryAmount;
         if (expense.amountInSecondary !== undefined) {
-            // 新格式：使用保存的次货币金额
             secondaryAmount = expense.amountInSecondary;
         } else {
-            // 旧格式：使用当前汇率转换（兼容旧数据）
             secondaryAmount = convertCurrency(expense.amount);
+        }
+        
+        // 格式化日期显示
+        let dateStr = '';
+        if (expense.date) {
+            const date = new Date(expense.date);
+            dateStr = `<div class="item-date">${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}</div>`;
         }
         
         div.innerHTML = `
             <div class="item-info">
                 <div class="item-name">${expense.name}</div>
+                ${dateStr}
                 <div class="item-amount">${formatAmount(expense.amount, data.primaryCurrency)}</div>
                 <div class="item-amount-secondary">${formatAmount(secondaryAmount, data.secondaryCurrency)}</div>
             </div>
             <div class="item-actions">
-                <button class="edit-btn" onclick="editExpense(${index})">编辑</button>
-                <button class="delete-btn" onclick="deleteExpense(${index})">删除</button>
+                <button class="edit-btn" onclick="editExpense(${expense._originalIndex})">编辑</button>
+                <button class="delete-btn" onclick="deleteExpense(${expense._originalIndex})">删除</button>
             </div>
         `;
         list.appendChild(div);
@@ -610,7 +632,8 @@ document.getElementById('addExpense').addEventListener('click', () => {
             amountInSecondary,
             exchangeRate: data.exchangeRate,
             primaryCurrency: data.primaryCurrency,
-            secondaryCurrency: data.secondaryCurrency
+            secondaryCurrency: data.secondaryCurrency,
+            date: new Date().toISOString()
         });
         saveData();
         updateAllDisplays();
@@ -649,6 +672,13 @@ document.getElementById('saveResetDay').addEventListener('click', () => {
     } else {
         alert('请输入1-28之间的日期');
     }
+});
+
+// 支出筛选器事件监听
+document.getElementById('expenseMonthFilter').addEventListener('change', updateExpensesList);
+document.getElementById('resetExpenseFilter').addEventListener('click', () => {
+    document.getElementById('expenseMonthFilter').value = '';
+    updateExpensesList();
 });
 
 document.getElementById('addWish').addEventListener('click', () => {
