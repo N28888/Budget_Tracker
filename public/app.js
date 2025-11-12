@@ -193,7 +193,10 @@ function updateRateDisplay() {
         const now = new Date();
         const diffMinutes = Math.floor((now - updateTime) / (1000 * 60));
         
-        if (diffMinutes < 60) {
+        if (diffMinutes == 0) {
+            displayText += ` (刚刚)`;
+        }
+        else if (diffMinutes < 60) {
             displayText += ` (${diffMinutes}分钟前)`;
         } else {
             const diffHours = Math.floor(diffMinutes / 60);
