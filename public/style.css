@@ -529,6 +529,23 @@ input:focus, select:focus {
     transform: translateY(-1px);
 }
 
+.buy-btn {
+    padding: 8px 16px;
+    background: var(--success);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.buy-btn:hover {
+    background: #059669;
+    transform: translateY(-1px);
+}
+
 /* 进度条 */
 .progress-bar {
     width: 100%;
@@ -769,7 +786,7 @@ input:focus, select:focus {
         flex-direction: column;
     }
     
-    .edit-btn, .delete-btn {
+    .edit-btn, .delete-btn, .buy-btn {
         width: 100%;
     }
     

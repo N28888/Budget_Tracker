@@ -337,6 +337,7 @@ function updateWishlist() {
                 <div class="item-amount-secondary">${formatAmount(convertCurrency(wish.price), data.secondaryCurrency)}</div>
             </div>
             <div class="item-actions">
+                <button class="buy-btn" onclick="buyWish(${index})">已购买</button>
                 <button class="edit-btn" onclick="editWish(${index})">编辑</button>
                 <button class="delete-btn" onclick="deleteWish(${index})">删除</button>
             </div>
@@ -546,6 +547,41 @@ function deleteWish(index) {
         data.wishlist.splice(index, 1);
         saveData();
         updateWishlist();
+    }
+}
+
+function buyWish(index) {
+    const wish = data.wishlist[index];
+    if (confirm(`确定已购买"${wish.name}"吗？\n价格: ${formatAmount(wish.price, data.primaryCurrency)}\n\n将从愿望单移除并添加到支出记录`)) {
+        // 计算次货币金额
+        let amountInSecondary;
+        if (wish.originalCurrency === 'secondary' && wish.originalPrice !== undefined) {
+            // 如果原本是次货币添加的，使用原始价格
+            amountInSecondary = wish.originalPrice;
+        } else {
+            // 否则用当前汇率转换
+            amountInSecondary = wish.price * data.exchangeRate;
+        }
+        
+        // 添加到支出记录
+        data.expenses.push({
+            name: wish.name,
+            amount: wish.price,
+            amountInSecondary: amountInSecondary,
+            exchangeRate: data.exchangeRate,
+            primaryCurrency: data.primaryCurrency,
+            secondaryCurrency: data.secondaryCurrency,
+            date: new Date().toISOString()
+        });
+        
+        // 从愿望单移除
+        data.wishlist.splice(index, 1);
+        
+        saveData();
+        updateAllDisplays();
+        
+        // 显示成功提示
+        alert(`✅ "${wish.name}" 已添加到支出记录！`);
     }
 }
 
